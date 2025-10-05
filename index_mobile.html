@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#4A90E2">
+    <title>현숙이 건강 관리앱</title>
+    <link rel="stylesheet" href="styles_mobile.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>💪 현숙이 건강 관리앱</h1>
+            <div class="week-nav">
+                <button id="prevWeek" class="btn-nav">← 지난 주</button>
+                <span id="weekDisplay" class="week-display">2025-10-06 ~ 2025-10-12</span>
+                <button id="nextWeek" class="btn-nav">다음 주 →</button>
+            </div>
+            <button id="copyFromLastWeek" class="btn-secondary">📋 지난 주 운동 복사</button>
+            <a href="report_mobile.html" class="report-link">📊 지난 주 리포트</a>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="exercise">💪 운동</button>
+            <button class="tab-btn" data-tab="health">📈 건강지표</button>
+            <button class="tab-btn" data-tab="meal">🍽️ 식단</button>
+        </nav>
+
+        <!-- Exercise Tab -->
+        <div id="exerciseTab" class="tab-content active">
+            <div class="master-exercise-section">
+                <h2>운동 목록 관리</h2>
+                <div class="add-exercise-form">
+                    <input type="text" id="exerciseName" placeholder="운동 이름 (예: 런닝)" class="input-field">
+                    <select id="exerciseDuration" class="select-field">
+                        <option value="10">10분</option>
+                        <option value="20">20분</option>
+                        <option value="30" selected>30분</option>
+                        <option value="40">40분</option>
+                        <option value="50">50분</option>
+                        <option value="60">60분</option>
+                        <option value="90">90분</option>
+                        <option value="120">120분</option>
+                    </select>
+                    <button id="addExerciseBtn" class="btn-primary">추가</button>
+                </div>
+                <div id="masterExerciseList" class="master-exercise-list"></div>
+            </div>
+
+            
+            <!-- Day Quick Navigation -->
+            <div class="day-quick-nav">
+                <div class="day-quick-nav-title">빠른 이동</div>
+                <div class="day-nav-buttons">
+                    <button class="day-nav-btn" data-day="0">월</button>
+                    <button class="day-nav-btn" data-day="1">화</button>
+                    <button class="day-nav-btn" data-day="2">수</button>
+                    <button class="day-nav-btn" data-day="3">목</button>
+                    <button class="day-nav-btn" data-day="4">금</button>
+                    <button class="day-nav-btn" data-day="5">토</button>
+                    <button class="day-nav-btn" data-day="6">일</button>
+                </div>
+            </div>
+
+            <div class="weekly-exercise-section">
+                <h2>주간 운동 계획</h2>
+                <div id="dayCards" class="day-cards"></div>
+            </div>
+        </div>
+
+        <!-- Health Tab -->
+        <div id="healthTab" class="tab-content">
+            <div class="health-metrics-section">
+                <h2>건강지표</h2>
+                <div class="metric-item">
+                    <label for="weightInput">몸무게 (kg)</label>
+                    <input type="number" id="weightInput" step="0.1" placeholder="65.5" class="input-field">
+                </div>
+                
+                <div class="custom-metrics">
+                    <h3>커스텀 지표</h3>
+                    <div class="add-metric-form">
+                        <input type="text" id="metricName" placeholder="지표 이름 (예: 체지방률)" class="input-field">
+                        <button id="addMetricBtn" class="btn-primary">지표 추가</button>
+                    </div>
+                    <div id="customMetricsList" class="custom-metrics-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meal Tab -->
+        <div id="mealTab" class="tab-content">
+            <div class="meal-section">
+                <h2>식단 기록</h2>
+                <div class="add-meal-form">
+                    <input type="date" id="mealDate" class="input-field">
+                    <select id="mealType" class="select-field">
+                        <option value="아침">아침</option>
+                        <option value="점심">점심</option>
+                        <option value="저녁">저녁</option>
+                        <option value="간식">간식</option>
+                    </select>
+                    <input type="text" id="mealFood" placeholder="음식 (예: 밥, 김치찌개, 계란)" class="input-field">
+                    <input type="file" id="mealPhoto" accept="image/*" class="file-input">
+                    <input type="number" id="mealCalories" placeholder="칼로리 (자동 추정)" class="input-field">
+                    <button id="addMealBtn" class="btn-primary">식단 추가</button>
+                </div>
+                <div id="mealList" class="meal-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app_new.js"></script>
+</body>
+</html>

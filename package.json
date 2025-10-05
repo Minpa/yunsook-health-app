@@ -1,0 +1,19 @@
+{
+  "name": "hyunsook-health-app",
+  "version": "1.0.0",
+  "description": "현숙이 건강 관리앱 - Health tracking app for exercise, meals, and health metrics",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["health", "exercise", "tracking", "korean"],
+  "author": "Hyeongjin Kim",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

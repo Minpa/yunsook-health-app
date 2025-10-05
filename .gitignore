@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# Backup files
+*.bak
+*.backup
+*_backup_*
+
+# Test files (optional - remove if you want to include them)
+test_*.html
+debug*.html
+check_storage.html
+QUICK_FIX_TEST.html
+
+# Documentation (optional - remove if you want to include them)
+*.txt
+*.md
+!README.md

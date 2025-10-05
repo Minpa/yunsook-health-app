@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#4A90E2">
+    <title>주간 리포트 - 현숙이 건강 관리앱</title>
+    <link rel="stylesheet" href="styles_mobile.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📊 주간 리포트</h1>
+            <a href="index_mobile.html" class="btn-secondary">← 돌아가기</a>
+        </header>
+
+        <div class="report-content">
+            <div class="report-header">
+                <h2 id="reportWeekRange">지난 주 요약</h2>
+            </div>
+
+            <div class="report-sections">
+                <!-- Exercise Stats -->
+                <div class="report-section">
+                    <h3>💪 운동 통계</h3>
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">달성률</div>
+                            <div class="stat-value" id="completionRate">0%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">총 운동 시간</div>
+                            <div class="stat-value" id="totalMinutes">0분</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">완료한 운동</div>
+                            <div class="stat-value" id="completedCount">0개</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">전체 운동</div>
+                            <div class="stat-value" id="totalCount">0개</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nutrition Stats -->
+                <div class="report-section">
+                    <h3>🍽️ 식단 통계</h3>
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">총 섭취 칼로리</div>
+                            <div class="stat-value" id="totalCalories">0 kcal</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">일평균 칼로리</div>
+                            <div class="stat-value" id="avgCalories">0 kcal</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">식사 횟수</div>
+                            <div class="stat-value" id="mealCount">0끼</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health Stats -->
+                <div class="report-section">
+                    <h3>📈 건강 지표</h3>
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">시작 몸무게</div>
+                            <div class="stat-value" id="startWeight">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">종료 몸무게</div>
+                            <div class="stat-value" id="endWeight">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">몸무게 변화</div>
+                            <div class="stat-value" id="weightChange">-</div>
+                        </div>
+                    </div>
+                    <div id="customMetricsReport" class="mt-4"></div>
+                </div>
+            </div>
+
+            <div id="noDataMessage" style="display: none; text-align: center; padding: 40px 20px; color: #666;">
+                <p style="font-size: 18px; margin-bottom: 10px;">📊</p>
+                <p>지난 주 데이터가 없습니다.</p>
+                <p style="font-size: 14px; margin-top: 10px;">운동, 식단, 건강지표를 기록해보세요!</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="app_new.js"></script>
+    <script>
+        // Display report when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.reportGenerator) {
+                window.reportGenerator.displayReport();
+            }
+        });
+    </script>
+</body>
+</html>
