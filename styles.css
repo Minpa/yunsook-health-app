@@ -112,7 +112,8 @@ body {
 
 /* Tabs */
 .tabs {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
     margin-bottom: 20px;
     background: var(--card-bg);
@@ -122,7 +123,6 @@ body {
 }
 
 .tab-btn {
-    flex: 1;
     padding: 12px 20px;
     background: transparent;
     border: 2px solid transparent;
@@ -546,7 +546,9 @@ body {
     }
     
     .tabs {
-        flex-direction: column;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        padding: 8px;
     }
 }
 
