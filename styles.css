@@ -628,3 +628,34 @@ body {
         font-size: 13px;
     }
 }
+
+/* Memo Tab Styles */
+.memo-section {
+    margin-top: 20px;
+}
+
+.memo-content {
+    padding: 15px;
+}
+
+.memo-textarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+}
+
+.memo-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.memo-textarea::placeholder {
+    color: #999;
+}

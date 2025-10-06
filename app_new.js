@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.exerciseManager = new ExerciseManager();
     window.healthTracker = new HealthTracker();
     window.mealManager = new MealManager();
+    window.memoManager = new MemoManager();
     window.reportGenerator = new ReportGenerator();
     
     // Initialize UI
@@ -72,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     exerciseManager.init();
     healthTracker.init();
     mealManager.init();
+    memoManager.init();
     
     console.log('앱 초기화 완료!');
 });
@@ -282,6 +284,9 @@ class WeekNavigator {
         }
         if (window.mealManager) {
             window.mealManager.loadWeekData(this.currentWeekKey);
+        }
+        if (window.memoManager) {
+            window.memoManager.onWeekChange();
         }
     }
     
@@ -1538,3 +1543,94 @@ class ReportGenerator {
         });
     }
 }
+
+// Memo Manager
+class MemoManager {
+    constructor() {
+        this.currentWeekKey = getCurrentWeekKey();
+        this.data = window.storageManager.loadData();
+    }
+
+    init() {
+        this.renderMemoCards();
+        console.log('MemoManager init complete');
+    }
+
+    renderMemoCards() {
+        const container = document.getElementById('memoCards');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        for (let i = 0; i < 7; i++) {
+            const card = this.createMemoCard(i);
+            container.appendChild(card);
+        }
+    }
+
+    createMemoCard(dayIndex) {
+        const card = document.createElement('div');
+        card.className = 'day-card';
+        card.id = `memoCard${dayIndex}`;
+
+        const weekRange = getWeekRange(this.currentWeekKey);
+        const dayDate = new Date(weekRange.start);
+        dayDate.setDate(dayDate.getDate() + dayIndex);
+
+        const dateStr = formatDate(dayDate);
+        const memoData = this.getMemoForDay(dateStr);
+
+        card.innerHTML = `
+            <div class="day-card-header">
+                <h3>${getKoreanDayName(dayIndex)} (${dateStr})</h3>
+            </div>
+            <div class="memo-content">
+                <textarea 
+                    id="memoText${dayIndex}" 
+                    class="memo-textarea" 
+                    placeholder="메모를 입력하세요..."
+                    data-date="${dateStr}"
+                >${memoData || ''}</textarea>
+                <button class="btn-primary" onclick="memoManager.saveMemo(${dayIndex}, '${dateStr}')">
+                    저장
+                </button>
+            </div>
+        `;
+
+        return card;
+    }
+
+    getMemoForDay(dateStr) {
+        if (!this.data.memos) {
+            this.data.memos = {};
+        }
+        return this.data.memos[dateStr] || '';
+    }
+
+    saveMemo(dayIndex, dateStr) {
+        const textarea = document.getElementById(`memoText${dayIndex}`);
+        const memoText = textarea.value.trim();
+
+        if (!this.data.memos) {
+            this.data.memos = {};
+        }
+
+        if (memoText) {
+            this.data.memos[dateStr] = memoText;
+        } else {
+            delete this.data.memos[dateStr];
+        }
+
+        window.storageManager.saveData(this.data);
+        alert('메모가 저장되었습니다!');
+    }
+
+    onWeekChange() {
+        this.currentWeekKey = getCurrentWeekKey();
+        this.data = window.storageManager.loadData();
+        this.renderMemoCards();
+    }
+}
+
+// Initialize memo manager
+const memoManager = new MemoManager();
