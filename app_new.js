@@ -410,17 +410,21 @@ class TabManager {
                 }
                 break;
             case 'memo':
+                console.log('🔵 MEMO TAB REFRESH TRIGGERED');
                 if (window.memoManager && window.weekNavigator) {
-                    console.log('📝 Refreshing memo tab');
-                    // Always sync with current week and render
                     const currentWeek = window.weekNavigator.currentWeekKey;
-                    console.log('📝 Current week from navigator:', currentWeek);
-                    console.log('📝 Memo manager week:', window.memoManager.currentWeekKey);
+                    console.log('🔵 Reloading memo data for week:', currentWeek);
                     
-                    // Always reload and render to ensure sync
-                    window.memoManager.loadWeekData(currentWeek).then(() => {
+                    // Force reload and render
+                    window.memoManager.currentWeekKey = currentWeek;
+                    window.memoManager.loadWeekMemos().then(() => {
+                        console.log('🔵 Data loaded, now rendering');
                         window.memoManager.renderMemoCards();
+                    }).catch(err => {
+                        console.error('🔴 Error loading memos:', err);
                     });
+                } else {
+                    console.error('🔴 memoManager or weekNavigator not found');
                 }
                 break;
         }
