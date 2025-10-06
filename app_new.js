@@ -1578,24 +1578,31 @@ class MemoManager {
         dayDate.setDate(dayDate.getDate() + dayIndex);
 
         const dateStr = formatDate(dayDate);
-        const memoData = this.getMemoForDay(dateStr);
 
         card.innerHTML = `
             <div class="day-card-header">
                 <h3>${getKoreanDayName(dayIndex)} (${dateStr})</h3>
             </div>
-            <div class="memo-content">
-                <textarea 
-                    id="memoText${dayIndex}" 
-                    class="memo-textarea" 
-                    placeholder="메모를 입력하세요..."
-                    data-date="${dateStr}"
-                >${memoData || ''}</textarea>
-                <button class="btn-primary" onclick="memoManager.saveMemo(${dayIndex}, '${dateStr}')">
-                    저장
-                </button>
+            <div class="memo-add-section">
+                <input type="text" id="memoInput${dayIndex}" placeholder="메모 입력..." class="input-field" data-date="${dateStr}">
+                <button class="btn-primary" onclick="memoManager.addMemo(${dayIndex}, '${dateStr}')">추가</button>
             </div>
+            <div class="memo-list" id="memoList${dayIndex}"></div>
         `;
+
+        // Add Enter key support
+        setTimeout(() => {
+            const input = document.getElementById(`memoInput${dayIndex}`);
+            if (input) {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.addMemo(dayIndex, dateStr);
+                    }
+                });
+            }
+        }, 0);
+
+        this.renderMemoList(dayIndex, dateStr);
 
         return card;
     }
@@ -1604,25 +1611,82 @@ class MemoManager {
         if (!this.data.memos) {
             this.data.memos = {};
         }
-        return this.data.memos[dateStr] || '';
+        if (!this.data.memos[dateStr]) {
+            this.data.memos[dateStr] = [];
+        }
+        return this.data.memos[dateStr];
     }
 
-    saveMemo(dayIndex, dateStr) {
-        const textarea = document.getElementById(`memoText${dayIndex}`);
-        const memoText = textarea.value.trim();
+    addMemo(dayIndex, dateStr) {
+        const input = document.getElementById(`memoInput${dayIndex}`);
+        const memoText = input.value.trim();
+
+        if (!memoText) {
+            alert('메모를 입력해주세요!');
+            return;
+        }
 
         if (!this.data.memos) {
             this.data.memos = {};
         }
+        if (!this.data.memos[dateStr]) {
+            this.data.memos[dateStr] = [];
+        }
 
-        if (memoText) {
-            this.data.memos[dateStr] = memoText;
-        } else {
+        const memo = {
+            id: Date.now(),
+            text: memoText,
+            timestamp: new Date().toISOString()
+        };
+
+        this.data.memos[dateStr].push(memo);
+        window.storageManager.saveData(this.data);
+
+        input.value = '';
+        this.renderMemoList(dayIndex, dateStr);
+    }
+
+    deleteMemo(dayIndex, dateStr, memoId) {
+        if (!this.data.memos || !this.data.memos[dateStr]) return;
+
+        this.data.memos[dateStr] = this.data.memos[dateStr].filter(m => m.id !== memoId);
+        
+        if (this.data.memos[dateStr].length === 0) {
             delete this.data.memos[dateStr];
         }
 
         window.storageManager.saveData(this.data);
-        alert('메모가 저장되었습니다!');
+        this.renderMemoList(dayIndex, dateStr);
+    }
+
+    renderMemoList(dayIndex, dateStr) {
+        const container = document.getElementById(`memoList${dayIndex}`);
+        if (!container) return;
+
+        const memos = this.getMemoForDay(dateStr);
+
+        if (memos.length === 0) {
+            container.innerHTML = '<p style="color: #999; font-size: 14px; padding: 10px 0;">메모가 없습니다.</p>';
+            return;
+        }
+
+        container.innerHTML = '';
+
+        memos.forEach(memo => {
+            const memoItem = document.createElement('div');
+            memoItem.className = 'memo-item';
+            memoItem.innerHTML = `
+                <div class="memo-text">${memo.text}</div>
+                <button class="btn-danger" onclick="memoManager.deleteMemo(${dayIndex}, '${dateStr}', ${memo.id})">삭제</button>
+            `;
+            container.appendChild(memoItem);
+        });
+    }
+
+    loadWeekData(weekKey) {
+        this.currentWeekKey = weekKey;
+        this.data = window.storageManager.loadData();
+        this.renderMemoCards();
     }
 
     onWeekChange() {

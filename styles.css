@@ -634,28 +634,52 @@ body {
     margin-top: 20px;
 }
 
-.memo-content {
+.memo-add-section {
     padding: 15px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
-.memo-textarea {
-    width: 100%;
-    min-height: 150px;
+.memo-add-section input {
+    flex: 1;
+}
+
+.memo-list {
+    padding: 0 15px 15px 15px;
+}
+
+.memo-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 12px;
-    border: 2px solid var(--border-color);
+    background: var(--background);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
+    margin-bottom: 8px;
+    gap: 10px;
+}
+
+.memo-text {
+    flex: 1;
     font-size: 14px;
-    font-family: inherit;
-    resize: vertical;
-    margin-bottom: 10px;
-    transition: border-color 0.2s;
+    color: var(--text-primary);
+    word-break: break-word;
 }
 
-.memo-textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
+.memo-item .btn-danger {
+    padding: 6px 12px;
+    font-size: 12px;
+    white-space: nowrap;
 }
 
-.memo-textarea::placeholder {
-    color: #999;
+@media (max-width: 767px) {
+    .memo-add-section {
+        flex-direction: column;
+    }
+    
+    .memo-add-section input {
+        width: 100%;
+    }
 }
