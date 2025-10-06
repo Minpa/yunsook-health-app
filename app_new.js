@@ -1632,5 +1632,3 @@ class MemoManager {
     }
 }
 
-// Initialize memo manager
-const memoManager = new MemoManager();
