@@ -29,8 +29,9 @@ function getWeekRange(weekKey) {
 function formatWeekDisplay(weekKey) {
     const range = getWeekRange(weekKey);
     const start = formatDate(range.start);
-    const end = formatDate(range.end);
-    return `${start} ~ ${end}`;
+    // Only show day for end date (not full date)
+    const endDay = String(range.end.getDate()).padStart(2, '0');
+    return `${start} ~ ${endDay}`;
 }
 
 function formatDate(date) {
