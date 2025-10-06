@@ -98,7 +98,15 @@ app.post('/api/auth/register', async (req, res) => {
         const user = result.rows[0];
         req.session.userId = user.id;
         
-        res.json({ success: true, user: { id: user.id, email: user.email, name: user.name } });
+        // Save session explicitly
+        req.session.save((err) => {
+            if (err) {
+                console.error('Session save error:', err);
+                return res.status(500).json({ error: 'Session save failed' });
+            }
+            console.log('Session saved for user:', user.id);
+            res.json({ success: true, user: { id: user.id, email: user.email, name: user.name } });
+        });
     } catch (error) {
         console.error('Register error:', error);
         res.status(500).json({ error: 'Registration failed' });
@@ -134,7 +142,15 @@ app.post('/api/auth/login', async (req, res) => {
         
         req.session.userId = user.id;
         
-        res.json({ success: true, user: { id: user.id, email: user.email, name: user.name } });
+        // Save session explicitly
+        req.session.save((err) => {
+            if (err) {
+                console.error('Session save error:', err);
+                return res.status(500).json({ error: 'Session save failed' });
+            }
+            console.log('Session saved for user:', user.id);
+            res.json({ success: true, user: { id: user.id, email: user.email, name: user.name } });
+        });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ error: 'Login failed' });
