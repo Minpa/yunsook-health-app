@@ -83,6 +83,7 @@ class StorageManager {
             masterExercises: [],
             weeklyExercises: {},
             healthData: {},
+            weeklyHealth: {},
             metricDefinitions: [],
             meals: {}
         };
@@ -374,7 +375,7 @@ class TabManager {
             case 'health':
                 if (window.healthTracker) {
                     window.healthTracker.data = window.storageManager.loadData();
-                    window.healthTracker.renderHealthMetrics();
+                    window.healthTracker.renderHealthCards();
                 }
                 break;
             case 'meal':
