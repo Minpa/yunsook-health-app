@@ -422,6 +422,7 @@ class ExerciseManager {
         this.setupEventListeners();
         this.renderMasterList();
         this.renderDayCards();
+        this.setupDayNavigation();
         console.log('ExerciseManager init complete');
     }
     
