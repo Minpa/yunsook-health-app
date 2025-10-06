@@ -1795,3 +1795,29 @@ class MemoManager {
 }
 
 
+
+// ============================================
+// INITIALIZATION
+// ============================================
+
+// Initialize all managers when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 Initializing app...');
+    
+    // Create manager instances
+    window.tabManager = new TabManager();
+    window.weekNavigator = new WeekNavigator();
+    window.memoManager = new MemoManager();
+    
+    // Attach tab button click listeners
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tabName = button.getAttribute('data-tab');
+            console.log('🔵 Tab button clicked:', tabName);
+            window.tabManager.switchTab(tabName);
+        });
+    });
+    
+    console.log('✅ App initialized successfully');
+});
