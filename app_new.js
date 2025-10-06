@@ -1547,7 +1547,7 @@ class ReportGenerator {
 // Memo Manager
 class MemoManager {
     constructor() {
-        this.currentWeekKey = getCurrentWeekKey();
+        this.currentWeekKey = getWeekKey(new Date());
         this.data = window.storageManager.loadData();
     }
 
@@ -1626,7 +1626,7 @@ class MemoManager {
     }
 
     onWeekChange() {
-        this.currentWeekKey = getCurrentWeekKey();
+        this.currentWeekKey = getWeekKey(new Date());
         this.data = window.storageManager.loadData();
         this.renderMemoCards();
     }
