@@ -1778,10 +1778,25 @@ class MemoManager {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Initializing app...');
     
-    // Create manager instances
-    window.tabManager = new TabManager();
+    // Create storage manager first
+    window.storageManager = new StorageManager();
+    
+    // Create all manager instances
     window.weekNavigator = new WeekNavigator();
+    window.tabManager = new TabManager();
+    window.exerciseManager = new ExerciseManager();
+    window.healthTracker = new HealthTracker();
+    window.mealManager = new MealManager();
     window.memoManager = new MemoManager();
+    window.reportGenerator = new ReportGenerator();
+    
+    // Initialize all managers (this attaches their event listeners)
+    window.weekNavigator.init();
+    window.tabManager.init();
+    window.exerciseManager.init();
+    window.healthTracker.init();
+    window.mealManager.init();
+    window.memoManager.init();
     
     // Attach tab button click listeners
     const tabButtons = document.querySelectorAll('.tab-btn');
