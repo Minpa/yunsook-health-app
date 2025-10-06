@@ -248,9 +248,8 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    // Save token and user info to localStorage
-                    localStorage.setItem('authToken', data.token);
-                    localStorage.setItem('username', data.user.username || data.user.email);
+                    // Save username for display (session is handled by cookie)
+                    localStorage.setItem('username', data.user.name || data.user.email);
                     
                     showSuccess('로그인 성공! 이동 중...');
                     setTimeout(() => {
@@ -293,9 +292,8 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    // Save token and user info to localStorage
-                    localStorage.setItem('authToken', data.token);
-                    localStorage.setItem('username', data.user.username || data.user.email);
+                    // Save username for display (session is handled by cookie)
+                    localStorage.setItem('username', data.user.name || data.user.email);
                     
                     showSuccess('회원가입 성공! 로그인 중...');
                     setTimeout(() => {

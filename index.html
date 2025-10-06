@@ -9,9 +9,8 @@
 <body>
     <!-- AUTH CHECK - Must be first! -->
     <script>
-        // Check authentication before loading the app
-        (function() {
-            const authToken = localStorage.getItem('authToken');
+        // Check authentication with server (session-based)
+        (async function() {
             const currentPath = window.location.pathname;
             
             // Allow access to login page without auth
@@ -19,10 +18,17 @@
                 return;
             }
             
-            // If no token, redirect to login
-            if (!authToken) {
+            // Check session with server
+            try {
+                const response = await fetch('/health', { credentials: 'include' });
+                const data = await response.json();
+                
+                if (!data.authenticated) {
+                    window.location.href = '/login.html';
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
                 window.location.href = '/login.html';
-                return;
             }
         })();
     </script>
@@ -167,9 +173,16 @@
         }
 
         // Logout function
-        function handleLogout() {
+        async function handleLogout() {
             if (confirm('로그아웃 하시겠습니까?')) {
-                localStorage.removeItem('authToken');
+                try {
+                    await fetch('/api/auth/logout', {
+                        method: 'POST',
+                        credentials: 'include'
+                    });
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
                 localStorage.removeItem('username');
                 window.location.href = '/login.html';
             }
