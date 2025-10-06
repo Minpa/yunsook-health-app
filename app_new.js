@@ -409,6 +409,12 @@ class TabManager {
                     window.mealManager.renderMealList();
                 }
                 break;
+            case 'memo':
+                if (window.memoManager) {
+                    console.log('📝 Refreshing memo tab');
+                    window.memoManager.renderMemoCards();
+                }
+                break;
         }
     }
     
@@ -1594,8 +1600,12 @@ class MemoManager {
 
     renderMemoCards() {
         const container = document.getElementById('memoCards');
-        if (!container) return;
+        if (!container) {
+            console.log('⚠️ Memo container not found, will render when tab is opened');
+            return;
+        }
 
+        console.log('📝 Rendering memo cards with data:', this.memos);
         container.innerHTML = '';
 
         for (let i = 0; i < 7; i++) {
