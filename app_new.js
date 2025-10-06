@@ -936,31 +936,24 @@ class HealthTracker {
                            onchange="healthTracker.saveWeight(${dayIndex}, this.value)">
                 </div>
                 <div class="metric-item">
-                    <label>혈압 (수축기/이완기)</label>
-                    <div style="display: flex; gap: 5px;">
-                        <input type="number" 
-                               id="systolic${dayIndex}" 
-                               value="${dayData.metrics?.systolic || ''}" 
-                               placeholder="120" 
-                               class="input-field"
-                               onchange="healthTracker.saveMetric(${dayIndex}, 'systolic', this.value)">
-                        <span style="align-self: center;">/</span>
-                        <input type="number" 
-                               id="diastolic${dayIndex}" 
-                               value="${dayData.metrics?.diastolic || ''}" 
-                               placeholder="80" 
-                               class="input-field"
-                               onchange="healthTracker.saveMetric(${dayIndex}, 'diastolic', this.value)">
-                    </div>
+                    <label>근육량 (kg)</label>
+                    <input type="number" 
+                           id="muscleMass${dayIndex}" 
+                           value="${dayData.metrics?.muscleMass || ''}" 
+                           step="0.1" 
+                           placeholder="30.0" 
+                           class="input-field"
+                           onchange="healthTracker.saveMetric(${dayIndex}, 'muscleMass', this.value)">
                 </div>
                 <div class="metric-item">
-                    <label>혈당 (mg/dL)</label>
+                    <label>체지방량 (kg)</label>
                     <input type="number" 
-                           id="bloodSugar${dayIndex}" 
-                           value="${dayData.metrics?.bloodSugar || ''}" 
-                           placeholder="100" 
+                           id="bodyFat${dayIndex}" 
+                           value="${dayData.metrics?.bodyFat || ''}" 
+                           step="0.1" 
+                           placeholder="15.0" 
                            class="input-field"
-                           onchange="healthTracker.saveMetric(${dayIndex}, 'bloodSugar', this.value)">
+                           onchange="healthTracker.saveMetric(${dayIndex}, 'bodyFat', this.value)">
                 </div>
             </div>
         `;
