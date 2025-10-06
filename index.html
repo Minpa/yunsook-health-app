@@ -20,7 +20,7 @@
             
             // Check session with server
             try {
-                const response = await fetch('/health', { credentials: 'include' });
+                const response = await fetch('/api/health', { credentials: 'include' });
                 const data = await response.json();
                 
                 console.log('Auth check response:', data);
