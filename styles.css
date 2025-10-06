@@ -523,8 +523,12 @@ body {
         padding: 10px;
     }
     
+    .header {
+        padding: 12px;
+    }
+    
     .header h1 {
-        font-size: 22px;
+        font-size: 18px !important;
     }
     
     .week-nav {
