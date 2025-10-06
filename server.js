@@ -350,3 +350,30 @@ app.get('/api/init-db', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+// Reset database - DELETE ALL DATA (for testing only)
+app.get('/api/reset-db', async (req, res) => {
+    try {
+        const client = await pool.connect();
+        
+        // Delete all data from all tables
+        await client.query('TRUNCATE TABLE custom_metric_values CASCADE');
+        await client.query('TRUNCATE TABLE custom_metric_definitions CASCADE');
+        await client.query('TRUNCATE TABLE weekly_exercises CASCADE');
+        await client.query('TRUNCATE TABLE meals CASCADE');
+        await client.query('TRUNCATE TABLE health_metrics CASCADE');
+        await client.query('TRUNCATE TABLE master_exercises CASCADE');
+        await client.query('TRUNCATE TABLE users CASCADE');
+        
+        client.release();
+        
+        res.json({ 
+            success: true, 
+            message: 'All data deleted. You can now sign up again!',
+            deleted: ['users', 'exercises', 'meals', 'health_metrics', 'custom_metrics', 'weekly_exercises']
+        });
+    } catch (error) {
+        console.error('Reset DB error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
