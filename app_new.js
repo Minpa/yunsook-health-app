@@ -1571,17 +1571,21 @@ class MemoManager {
 
             if (response.ok) {
                 const data = await response.json();
+                console.log('📝 Loaded memos from server:', data.memos);
                 this.memos = {};
                 data.memos.forEach(memo => {
-                    if (!this.memos[memo.date]) {
-                        this.memos[memo.date] = [];
+                    // Normalize date format to YYYY-MM-DD
+                    const dateStr = memo.date.split('T')[0]; // Handle ISO format
+                    if (!this.memos[dateStr]) {
+                        this.memos[dateStr] = [];
                     }
-                    this.memos[memo.date].push({
+                    this.memos[dateStr].push({
                         id: memo.id,
                         text: memo.text,
                         timestamp: memo.created_at
                     });
                 });
+                console.log('📝 Memos organized by date:', this.memos);
             }
         } catch (error) {
             console.error('Failed to load memos:', error);
@@ -1718,6 +1722,7 @@ class MemoManager {
         if (!container) return;
 
         const memos = this.getMemoForDay(dateStr);
+        console.log(`📝 Rendering memos for ${dateStr}:`, memos);
 
         if (memos.length === 0) {
             container.innerHTML = '<p style="color: #999; font-size: 14px; padding: 10px 0;">메모가 없습니다.</p>';
