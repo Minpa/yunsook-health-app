@@ -377,3 +377,71 @@ app.get('/api/reset-db', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+// Memo endpoints
+// Get memos for a date range
+app.get('/api/memos', authenticateToken, async (req, res) => {
+    const userId = req.user.userId;
+    const { startDate, endDate } = req.query;
+
+    try {
+        const result = await pool.query(
+            `SELECT id, date, text, created_at, updated_at 
+             FROM memos 
+             WHERE user_id = $1 AND date >= $2 AND date <= $3
+             ORDER BY date, created_at`,
+            [userId, startDate, endDate]
+        );
+
+        res.json({ memos: result.rows });
+    } catch (error) {
+        console.error('Get memos error:', error);
+        res.status(500).json({ error: 'Failed to fetch memos' });
+    }
+});
+
+// Add a memo
+app.post('/api/memos', authenticateToken, async (req, res) => {
+    const userId = req.user.userId;
+    const { date, text } = req.body;
+
+    if (!date || !text) {
+        return res.status(400).json({ error: 'Date and text are required' });
+    }
+
+    try {
+        const result = await pool.query(
+            `INSERT INTO memos (user_id, date, text) 
+             VALUES ($1, $2, $3) 
+             RETURNING id, date, text, created_at, updated_at`,
+            [userId, date, text]
+        );
+
+        res.json({ memo: result.rows[0] });
+    } catch (error) {
+        console.error('Add memo error:', error);
+        res.status(500).json({ error: 'Failed to add memo' });
+    }
+});
+
+// Delete a memo
+app.delete('/api/memos/:id', authenticateToken, async (req, res) => {
+    const userId = req.user.userId;
+    const memoId = req.params.id;
+
+    try {
+        const result = await pool.query(
+            'DELETE FROM memos WHERE id = $1 AND user_id = $2 RETURNING id',
+            [memoId, userId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Memo not found' });
+        }
+
+        res.json({ success: true, id: memoId });
+    } catch (error) {
+        console.error('Delete memo error:', error);
+        res.status(500).json({ error: 'Failed to delete memo' });
+    }
+});

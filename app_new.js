@@ -1548,12 +1548,47 @@ class ReportGenerator {
 class MemoManager {
     constructor() {
         this.currentWeekKey = getWeekKey(new Date());
-        this.data = window.storageManager.loadData();
+        this.memos = {};
     }
 
-    init() {
+    async init() {
+        await this.loadWeekMemos();
         this.renderMemoCards();
         console.log('MemoManager init complete');
+    }
+
+    async loadWeekMemos() {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
+
+        const weekRange = getWeekRange(this.currentWeekKey);
+        const startDate = formatDate(weekRange.start);
+        const endDate = formatDate(weekRange.end);
+
+        try {
+            const response = await fetch(`/api/memos?startDate=${startDate}&endDate=${endDate}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                this.memos = {};
+                data.memos.forEach(memo => {
+                    if (!this.memos[memo.date]) {
+                        this.memos[memo.date] = [];
+                    }
+                    this.memos[memo.date].push({
+                        id: memo.id,
+                        text: memo.text,
+                        timestamp: memo.created_at
+                    });
+                });
+            }
+        } catch (error) {
+            console.error('Failed to load memos:', error);
+        }
     }
 
     renderMemoCards() {
@@ -1590,7 +1625,6 @@ class MemoManager {
             <div class="memo-list" id="memoList${dayIndex}"></div>
         `;
 
-        // Add Enter key support
         setTimeout(() => {
             const input = document.getElementById(`memoInput${dayIndex}`);
             if (input) {
@@ -1608,28 +1642,10 @@ class MemoManager {
     }
 
     getMemoForDay(dateStr) {
-        if (!this.data.memos) {
-            this.data.memos = {};
-        }
-        
-        // Migrate old string format to array format
-        if (typeof this.data.memos[dateStr] === 'string') {
-            const oldText = this.data.memos[dateStr];
-            this.data.memos[dateStr] = [{
-                id: Date.now(),
-                text: oldText,
-                timestamp: new Date().toISOString()
-            }];
-            window.storageManager.saveData(this.data);
-        }
-        
-        if (!this.data.memos[dateStr]) {
-            this.data.memos[dateStr] = [];
-        }
-        return this.data.memos[dateStr];
+        return this.memos[dateStr] || [];
     }
 
-    addMemo(dayIndex, dateStr) {
+    async addMemo(dayIndex, dateStr) {
         const input = document.getElementById(`memoInput${dayIndex}`);
         const memoText = input.value.trim();
 
@@ -1638,48 +1654,73 @@ class MemoManager {
             return;
         }
 
-        if (!this.data.memos) {
-            this.data.memos = {};
-        }
-        
-        // Migrate old string format to array format
-        if (typeof this.data.memos[dateStr] === 'string') {
-            const oldText = this.data.memos[dateStr];
-            this.data.memos[dateStr] = [{
-                id: Date.now() - 1,
-                text: oldText,
-                timestamp: new Date().toISOString()
-            }];
-        }
-        
-        if (!this.data.memos[dateStr]) {
-            this.data.memos[dateStr] = [];
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            alert('로그인이 필요합니다');
+            return;
         }
 
-        const memo = {
-            id: Date.now(),
-            text: memoText,
-            timestamp: new Date().toISOString()
-        };
+        try {
+            const response = await fetch('/api/memos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ date: dateStr, text: memoText })
+            });
 
-        this.data.memos[dateStr].push(memo);
-        window.storageManager.saveData(this.data);
+            if (response.ok) {
+                const data = await response.json();
+                
+                if (!this.memos[dateStr]) {
+                    this.memos[dateStr] = [];
+                }
+                
+                this.memos[dateStr].push({
+                    id: data.memo.id,
+                    text: data.memo.text,
+                    timestamp: data.memo.created_at
+                });
 
-        input.value = '';
-        this.renderMemoList(dayIndex, dateStr);
+                input.value = '';
+                this.renderMemoList(dayIndex, dateStr);
+            } else {
+                alert('메모 저장 실패');
+            }
+        } catch (error) {
+            console.error('Add memo error:', error);
+            alert('메모 저장 중 오류가 발생했습니다');
+        }
     }
 
-    deleteMemo(dayIndex, dateStr, memoId) {
-        if (!this.data.memos || !this.data.memos[dateStr]) return;
+    async deleteMemo(dayIndex, dateStr, memoId) {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
 
-        this.data.memos[dateStr] = this.data.memos[dateStr].filter(m => m.id !== memoId);
-        
-        if (this.data.memos[dateStr].length === 0) {
-            delete this.data.memos[dateStr];
+        try {
+            const response = await fetch(`/api/memos/${memoId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                if (this.memos[dateStr]) {
+                    this.memos[dateStr] = this.memos[dateStr].filter(m => m.id !== memoId);
+                    if (this.memos[dateStr].length === 0) {
+                        delete this.memos[dateStr];
+                    }
+                }
+                this.renderMemoList(dayIndex, dateStr);
+            } else {
+                alert('메모 삭제 실패');
+            }
+        } catch (error) {
+            console.error('Delete memo error:', error);
+            alert('메모 삭제 중 오류가 발생했습니다');
         }
-
-        window.storageManager.saveData(this.data);
-        this.renderMemoList(dayIndex, dateStr);
     }
 
     renderMemoList(dayIndex, dateStr) {
@@ -1706,16 +1747,17 @@ class MemoManager {
         });
     }
 
-    loadWeekData(weekKey) {
+    async loadWeekData(weekKey) {
         this.currentWeekKey = weekKey;
-        this.data = window.storageManager.loadData();
+        await this.loadWeekMemos();
         this.renderMemoCards();
     }
 
-    onWeekChange() {
+    async onWeekChange() {
         this.currentWeekKey = getWeekKey(new Date());
-        this.data = window.storageManager.loadData();
+        await this.loadWeekMemos();
         this.renderMemoCards();
     }
 }
+
 

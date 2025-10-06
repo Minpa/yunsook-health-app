@@ -80,3 +80,15 @@ CREATE TABLE IF NOT EXISTS meals (
 CREATE INDEX IF NOT EXISTS idx_weekly_exercises_user_week ON weekly_exercises(user_id, week_key);
 CREATE INDEX IF NOT EXISTS idx_health_metrics_user_week ON health_metrics(user_id, week_key);
 CREATE INDEX IF NOT EXISTS idx_meals_user_week ON meals(user_id, week_key);
+
+-- Memos table
+CREATE TABLE IF NOT EXISTS memos (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    text TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_memos_user_date ON memos(user_id, date);
