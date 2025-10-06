@@ -1005,6 +1005,7 @@ class HealthTracker {
         this.data.weeklyHealth[this.currentWeekKey].days[dayIndex].weight = weight;
         window.storageManager.saveData(this.data);
         console.log('Weight saved for day', dayIndex, ':', weight);
+        this.renderHealthCards();
     }
     
     saveMetric(dayIndex, metricName, value) {
