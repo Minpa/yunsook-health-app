@@ -461,12 +461,17 @@ class ExerciseManager {
     }
     
     scrollToDay(dayIndex) {
+        console.log('Scrolling to day:', dayIndex);
         const dayCard = document.getElementById(`dayCard${dayIndex}`);
+        console.log('Day card found:', dayCard);
         if (dayCard) {
-            // Smooth scroll to the day card
-            dayCard.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'start'
+            // Smooth scroll to the day card with offset for header
+            const yOffset = -100; // Offset for header
+            const y = dayCard.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            
+            window.scrollTo({
+                top: y,
+                behavior: 'smooth'
             });
             
             // Add a highlight effect
