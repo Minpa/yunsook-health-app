@@ -23,12 +23,21 @@
                 const response = await fetch('/health', { credentials: 'include' });
                 const data = await response.json();
                 
+                console.log('Auth check response:', data);
+                
                 if (!data.authenticated) {
-                    window.location.href = '/login.html';
+                    console.log('Not authenticated, redirecting to login');
+                    setTimeout(() => {
+                        window.location.href = '/login.html';
+                    }, 100);
+                } else {
+                    console.log('Authenticated successfully');
                 }
             } catch (error) {
                 console.error('Auth check failed:', error);
-                window.location.href = '/login.html';
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 100);
             }
         })();
     </script>
