@@ -315,3 +315,38 @@ initDatabase().then(() => {
         console.log(`📱 Visit: http://localhost:${PORT}`);
     });
 });
+
+// Add route to manually initialize database
+app.get('/api/init-db', async (req, res) => {
+    try {
+        const client = await pool.connect();
+        const fs = require('fs');
+        const schemaPath = path.join(__dirname, 'database', 'schema.sql');
+        
+        if (fs.existsSync(schemaPath)) {
+            const schema = fs.readFileSync(schemaPath, 'utf8');
+            await client.query(schema);
+            
+            // Check tables
+            const result = await client.query(`
+                SELECT table_name 
+                FROM information_schema.tables 
+                WHERE table_schema = 'public'
+                ORDER BY table_name;
+            `);
+            
+            client.release();
+            
+            res.json({ 
+                success: true, 
+                message: 'Database initialized',
+                tables: result.rows.map(r => r.table_name)
+            });
+        } else {
+            res.status(404).json({ error: 'Schema file not found' });
+        }
+    } catch (error) {
+        console.error('Init DB error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
