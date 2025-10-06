@@ -1616,7 +1616,13 @@ class MemoManager {
 
         console.log('📝 Rendering memo cards for week:', this.currentWeekKey);
         console.log('📝 With memo data:', this.memos);
+        
+        // Force clear everything
         container.innerHTML = '';
+        
+        // Get the current week range
+        const weekRange = getWeekRange(this.currentWeekKey);
+        console.log('📝 Week range:', formatDate(weekRange.start), 'to', formatDate(weekRange.end));
 
         for (let i = 0; i < 7; i++) {
             const card = this.createMemoCard(i);
@@ -1625,7 +1631,6 @@ class MemoManager {
 
         // Now render the memo lists after all cards are in the DOM
         for (let i = 0; i < 7; i++) {
-            const weekRange = getWeekRange(this.currentWeekKey);
             const dayDate = new Date(weekRange.start);
             dayDate.setDate(dayDate.getDate() + i);
             const dateStr = formatDate(dayDate);
