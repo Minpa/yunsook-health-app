@@ -51,32 +51,6 @@ function getShortKoreanDayName(dayIndex) {
     return days[dayIndex];
 }
 
-// Main Application Initialization
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('현숙이 건강 관리앱 초기화 중...');
-    
-    // Initialize storage manager
-    window.storageManager = new StorageManager();
-    
-    // Initialize managers
-    window.weekNavigator = new WeekNavigator();
-    window.tabManager = new TabManager();
-    window.exerciseManager = new ExerciseManager();
-    window.healthTracker = new HealthTracker();
-    window.mealManager = new MealManager();
-    window.memoManager = new MemoManager();
-    window.reportGenerator = new ReportGenerator();
-    
-    // Initialize UI
-    weekNavigator.init();
-    tabManager.init();
-    exerciseManager.init();
-    healthTracker.init();
-    mealManager.init();
-    memoManager.init();
-    
-    console.log('앱 초기화 완료!');
-});
 
 // Storage Manager - handles localStorage operations
 class StorageManager {
