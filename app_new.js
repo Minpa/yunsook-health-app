@@ -1764,8 +1764,14 @@ class MemoManager {
         this.currentWeekKey = weekKey;
         console.log('📝 Loading week data for:', weekKey);
         await this.loadWeekMemos();
-        // Don't render immediately - will render when tab is opened
-        console.log('📝 Week data loaded, waiting for tab switch to render');
+        
+        // If memo tab is currently active, render immediately
+        if (window.tabManager && window.tabManager.currentTab === 'memo') {
+            console.log('📝 Memo tab is active, rendering immediately');
+            this.renderMemoCards();
+        } else {
+            console.log('📝 Week data loaded, will render when tab is opened');
+        }
     }
 
     async onWeekChange(weekKey) {
