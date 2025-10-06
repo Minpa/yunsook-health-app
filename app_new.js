@@ -410,9 +410,18 @@ class TabManager {
                 }
                 break;
             case 'memo':
-                if (window.memoManager) {
+                if (window.memoManager && window.weekNavigator) {
                     console.log('📝 Refreshing memo tab');
-                    window.memoManager.renderMemoCards();
+                    // Make sure we're showing the current week's data
+                    const currentWeek = window.weekNavigator.currentWeekKey;
+                    if (window.memoManager.currentWeekKey !== currentWeek) {
+                        console.log('📝 Week mismatch, reloading data for:', currentWeek);
+                        window.memoManager.loadWeekData(currentWeek).then(() => {
+                            window.memoManager.renderMemoCards();
+                        });
+                    } else {
+                        window.memoManager.renderMemoCards();
+                    }
                 }
                 break;
         }
