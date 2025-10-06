@@ -1613,6 +1613,15 @@ class MemoManager {
             const card = this.createMemoCard(i);
             container.appendChild(card);
         }
+
+        // Now render the memo lists after all cards are in the DOM
+        for (let i = 0; i < 7; i++) {
+            const weekRange = getWeekRange(this.currentWeekKey);
+            const dayDate = new Date(weekRange.start);
+            dayDate.setDate(dayDate.getDate() + i);
+            const dateStr = formatDate(dayDate);
+            this.renderMemoList(i, dateStr);
+        }
     }
 
     createMemoCard(dayIndex) {
@@ -1648,8 +1657,7 @@ class MemoManager {
             }
         }, 0);
 
-        this.renderMemoList(dayIndex, dateStr);
-
+        // Don't render list here - will render after card is added to DOM
         return card;
     }
 
