@@ -286,7 +286,7 @@ class WeekNavigator {
             window.mealManager.loadWeekData(this.currentWeekKey);
         }
         if (window.memoManager) {
-            window.memoManager.onWeekChange();
+            window.memoManager.loadWeekData(this.currentWeekKey);
         }
     }
     
@@ -1743,8 +1743,8 @@ class MemoManager {
         this.renderMemoCards();
     }
 
-    async onWeekChange() {
-        this.currentWeekKey = getWeekKey(new Date());
+    async onWeekChange(weekKey) {
+        this.currentWeekKey = weekKey || getWeekKey(new Date());
         await this.loadWeekMemos();
         this.renderMemoCards();
     }
