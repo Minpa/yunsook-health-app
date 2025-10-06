@@ -1558,8 +1558,7 @@ class MemoManager {
     }
 
     async loadWeekMemos() {
-        const token = localStorage.getItem('authToken');
-        if (!token) return;
+        // Session-based auth - no token needed
 
         const weekRange = getWeekRange(this.currentWeekKey);
         const startDate = formatDate(weekRange.start);
@@ -1567,9 +1566,7 @@ class MemoManager {
 
         try {
             const response = await fetch(`/api/memos?startDate=${startDate}&endDate=${endDate}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                credentials: 'include'
             });
 
             if (response.ok) {
@@ -1654,18 +1651,14 @@ class MemoManager {
             return;
         }
 
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-            alert('로그인이 필요합니다');
-            return;
-        }
+        // Session-based auth - no token needed
 
         try {
             const response = await fetch('/api/memos', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'credentials': 'include'
                 },
                 body: JSON.stringify({ date: dateStr, text: memoText })
             });
@@ -1695,15 +1688,12 @@ class MemoManager {
     }
 
     async deleteMemo(dayIndex, dateStr, memoId) {
-        const token = localStorage.getItem('authToken');
-        if (!token) return;
+        // Session-based auth - no token needed
 
         try {
             const response = await fetch(`/api/memos/${memoId}`, {
                 method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                credentials: 'include'
             });
 
             if (response.ok) {

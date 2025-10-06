@@ -380,8 +380,8 @@ app.get('/api/reset-db', async (req, res) => {
 
 // Memo endpoints
 // Get memos for a date range
-app.get('/api/memos', authenticateToken, async (req, res) => {
-    const userId = req.user.userId;
+app.get('/api/memos', requireAuth, async (req, res) => {
+    const userId = req.session.userId;
     const { startDate, endDate } = req.query;
 
     try {
@@ -401,8 +401,8 @@ app.get('/api/memos', authenticateToken, async (req, res) => {
 });
 
 // Add a memo
-app.post('/api/memos', authenticateToken, async (req, res) => {
-    const userId = req.user.userId;
+app.post('/api/memos', requireAuth, async (req, res) => {
+    const userId = req.session.userId;
     const { date, text } = req.body;
 
     if (!date || !text) {
@@ -425,8 +425,8 @@ app.post('/api/memos', authenticateToken, async (req, res) => {
 });
 
 // Delete a memo
-app.delete('/api/memos/:id', authenticateToken, async (req, res) => {
-    const userId = req.user.userId;
+app.delete('/api/memos/:id', requireAuth, async (req, res) => {
+    const userId = req.session.userId;
     const memoId = req.params.id;
 
     try {
