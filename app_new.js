@@ -1559,8 +1559,9 @@ class MemoManager {
 
     async init() {
         await this.loadWeekMemos();
-        this.renderMemoCards();
-        console.log('MemoManager init complete');
+        // Don't render yet - container might not exist if tab isn't active
+        // Will render when tab is switched to
+        console.log('MemoManager init complete - data loaded, will render when tab is opened');
     }
 
     async loadWeekMemos() {
@@ -1754,8 +1755,10 @@ class MemoManager {
 
     async loadWeekData(weekKey) {
         this.currentWeekKey = weekKey;
+        console.log('📝 Loading week data for:', weekKey);
         await this.loadWeekMemos();
-        this.renderMemoCards();
+        // Don't render immediately - will render when tab is opened
+        console.log('📝 Week data loaded, waiting for tab switch to render');
     }
 
     async onWeekChange(weekKey) {
