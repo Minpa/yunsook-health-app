@@ -533,7 +533,6 @@ body {
     }
     
     .week-nav {
-        flex-direction: column;
         gap: 10px;
     }
     
