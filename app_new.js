@@ -1552,9 +1552,36 @@ class MemoManager {
 
     async init() {
         await this.loadWeekMemos();
+        this.setupDayNavigation();
         // Don't render yet - container might not exist if tab isn't active
         // Will render when tab is switched to
         console.log('MemoManager init complete - data loaded, will render when tab is opened');
+    }
+    
+    setupDayNavigation() {
+        const dayNavButtons = document.querySelectorAll('.memo-day-nav');
+        dayNavButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const dayIndex = parseInt(btn.dataset.day);
+                this.scrollToDay(dayIndex);
+                
+                // Update active state
+                dayNavButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+        
+        console.log('Memo day navigation setup complete');
+    }
+    
+    scrollToDay(dayIndex) {
+        console.log('Scrolling to memo day:', dayIndex);
+        const dayCard = document.getElementById(`memoCard${dayIndex}`);
+        if (dayCard) {
+            dayCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            console.log('Memo card not found for day:', dayIndex);
+        }
     }
 
     async loadWeekMemos() {
