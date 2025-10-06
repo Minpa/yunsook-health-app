@@ -7,10 +7,38 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- AUTH CHECK - Must be first! -->
+    <script>
+        // Check authentication before loading the app
+        (function() {
+            const authToken = localStorage.getItem('authToken');
+            const currentPath = window.location.pathname;
+            
+            // Allow access to login page without auth
+            if (currentPath.includes('login.html')) {
+                return;
+            }
+            
+            // If no token, redirect to login
+            if (!authToken) {
+                window.location.href = '/login.html';
+                return;
+            }
+        })();
+    </script>
+
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <h1>현숙이 건강 관리앱</h1>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h1>현숙이 건강 관리앱</h1>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span id="username-display" style="font-size: 14px; color: #666;"></span>
+                    <button onclick="handleLogout()" style="padding: 5px 15px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                        로그아웃
+                    </button>
+                </div>
+            </div>
             <div class="week-nav">
                 <button id="prevWeek" class="btn-nav">← 지난 주</button>
                 <span id="weekDisplay" class="week-display">2025-10-06 ~ 2025-10-12</span>
@@ -122,6 +150,22 @@
         </div>
     </div>
 
+    <script>
+        // Display username
+        const username = localStorage.getItem('username');
+        if (username) {
+            document.getElementById('username-display').textContent = `${username}님`;
+        }
+
+        // Logout function
+        function handleLogout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('username');
+                window.location.href = '/login.html';
+            }
+        }
+    </script>
     <script src="app_new.js"></script>
 </body>
 </html>
