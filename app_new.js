@@ -1611,6 +1611,18 @@ class MemoManager {
         if (!this.data.memos) {
             this.data.memos = {};
         }
+        
+        // Migrate old string format to array format
+        if (typeof this.data.memos[dateStr] === 'string') {
+            const oldText = this.data.memos[dateStr];
+            this.data.memos[dateStr] = [{
+                id: Date.now(),
+                text: oldText,
+                timestamp: new Date().toISOString()
+            }];
+            window.storageManager.saveData(this.data);
+        }
+        
         if (!this.data.memos[dateStr]) {
             this.data.memos[dateStr] = [];
         }
@@ -1629,6 +1641,17 @@ class MemoManager {
         if (!this.data.memos) {
             this.data.memos = {};
         }
+        
+        // Migrate old string format to array format
+        if (typeof this.data.memos[dateStr] === 'string') {
+            const oldText = this.data.memos[dateStr];
+            this.data.memos[dateStr] = [{
+                id: Date.now() - 1,
+                text: oldText,
+                timestamp: new Date().toISOString()
+            }];
+        }
+        
         if (!this.data.memos[dateStr]) {
             this.data.memos[dateStr] = [];
         }
