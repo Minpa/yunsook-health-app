@@ -125,20 +125,23 @@
         <!-- Health Tab -->
         <div id="healthTab" class="tab-content">
             <h2>건강지표</h2>
-            <div class="health-metrics-section">
-                <div class="metric-item">
-                    <label for="weightInput">몸무게 (kg)</label>
-                    <input type="number" id="weightInput" step="0.1" placeholder="65.5" class="input-field">
+            
+            <!-- Day Quick Navigation -->
+            <div class="day-quick-nav">
+                <div class="day-quick-nav-title">빠른 이동</div>
+                <div class="day-nav-buttons">
+                    <button class="day-nav-btn health-day-nav" data-day="0">월</button>
+                    <button class="day-nav-btn health-day-nav" data-day="1">화</button>
+                    <button class="day-nav-btn health-day-nav" data-day="2">수</button>
+                    <button class="day-nav-btn health-day-nav" data-day="3">목</button>
+                    <button class="day-nav-btn health-day-nav" data-day="4">금</button>
+                    <button class="day-nav-btn health-day-nav" data-day="5">토</button>
+                    <button class="day-nav-btn health-day-nav" data-day="6">일</button>
                 </div>
-                
-                <div class="custom-metrics">
-                    <h3>커스텀 지표</h3>
-                    <div class="add-metric-form">
-                        <input type="text" id="metricName" placeholder="지표 이름 (예: 체지방률)" class="input-field">
-                        <button id="addMetricBtn" class="btn-primary">지표 추가</button>
-                    </div>
-                    <div id="customMetricsList" class="custom-metrics-list"></div>
-                </div>
+            </div>
+            
+            <div class="health-section">
+                <div id="healthCards" class="day-cards"></div>
             </div>
         </div>
 

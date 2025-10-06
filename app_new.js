@@ -853,188 +853,155 @@ class HealthTracker {
     }
     
     init() {
-        this.setupEventListeners();
-        this.renderHealthMetrics();
+        this.setupDayNavigation();
+        this.renderHealthCards();
         console.log('HealthTracker init complete');
     }
     
-    setupEventListeners() {
-        // Weight input
-        const weightInput = document.getElementById('weightInput');
-        if (weightInput) {
-            weightInput.addEventListener('change', (e) => {
-                const weight = parseFloat(e.target.value);
-                if (!isNaN(weight) && weight > 0) {
-                    this.setWeight(this.currentWeekKey, weight);
-                }
+    setupDayNavigation() {
+        const dayNavButtons = document.querySelectorAll('.health-day-nav');
+        dayNavButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const dayIndex = parseInt(btn.dataset.day);
+                this.scrollToDay(dayIndex);
+                
+                // Update active state
+                dayNavButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
             });
-        }
-        
-        // Add metric button
-        const addMetricBtn = document.getElementById('addMetricBtn');
-        if (addMetricBtn) {
-            addMetricBtn.addEventListener('click', () => this.handleAddMetric());
-        }
-        
-        // Allow Enter key
-        const metricNameInput = document.getElementById('metricName');
-        if (metricNameInput) {
-            metricNameInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    this.handleAddMetric();
-                }
-            });
-        }
-    }
-    
-    handleAddMetric() {
-        const input = document.getElementById('metricName');
-        const name = input.value.trim();
-        
-        if (!name) {
-            alert('지표 이름을 입력해주세요.');
-            return;
-        }
-        
-        if (this.data.metricDefinitions.includes(name)) {
-            alert('이미 존재하는 지표입니다.');
-            return;
-        }
-        
-        this.addCustomMetric(name);
-        input.value = '';
-        input.focus();
-    }
-    
-    setWeight(weekKey, weight) {
-        if (!this.data.healthData[weekKey]) {
-            this.data.healthData[weekKey] = {
-                weight: null,
-                customMetrics: {}
-            };
-        }
-        
-        this.data.healthData[weekKey].weight = weight;
-        this.saveData();
-        
-        console.log('Weight set:', weight, 'for week:', weekKey);
-    }
-    
-    getWeight(weekKey) {
-        return this.data.healthData[weekKey]?.weight || null;
-    }
-    
-    addCustomMetric(name) {
-        if (!this.data.metricDefinitions.includes(name)) {
-            this.data.metricDefinitions.push(name);
-            this.saveData();
-            this.renderCustomMetrics();
-            
-            console.log('Added custom metric:', name);
-        }
-    }
-    
-    removeCustomMetric(name) {
-        this.data.metricDefinitions = this.data.metricDefinitions.filter(m => m !== name);
-        
-        // Remove from all weeks
-        Object.keys(this.data.healthData).forEach(weekKey => {
-            if (this.data.healthData[weekKey].customMetrics) {
-                delete this.data.healthData[weekKey].customMetrics[name];
-            }
         });
         
-        this.saveData();
-        this.renderCustomMetrics();
-        
-        console.log('Removed custom metric:', name);
+        console.log('Health day navigation setup complete');
     }
     
-    setMetricValue(weekKey, metricName, value) {
-        if (!this.data.healthData[weekKey]) {
-            this.data.healthData[weekKey] = {
-                weight: null,
-                customMetrics: {}
-            };
+    scrollToDay(dayIndex) {
+        console.log('Scrolling to health day:', dayIndex);
+        const dayCard = document.getElementById(`healthCard${dayIndex}`);
+        if (dayCard) {
+            dayCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-        
-        this.data.healthData[weekKey].customMetrics[metricName] = value;
-        this.saveData();
-        
-        console.log('Metric value set:', metricName, value, 'for week:', weekKey);
-    }
-    
-    getMetrics(weekKey) {
-        return this.data.healthData[weekKey] || { weight: null, customMetrics: {} };
-    }
-    
-    saveData() {
-        window.storageManager.saveData(this.data);
     }
     
     loadWeekData(weekKey) {
         this.currentWeekKey = weekKey;
-        this.data = window.storageManager.loadData();  // Reload data from storage
-        this.renderHealthMetrics();
+        this.data = window.storageManager.loadData();
+        this.renderHealthCards();
     }
     
-    renderHealthMetrics() {
-        // Load weight
-        const weightInput = document.getElementById('weightInput');
-        if (weightInput) {
-            const weight = this.getWeight(this.currentWeekKey);
-            weightInput.value = weight !== null ? weight : '';
-        }
-        
-        this.renderCustomMetrics();
-    }
-    
-    renderCustomMetrics() {
-        const container = document.getElementById('customMetricsList');
+    renderHealthCards() {
+        const container = document.getElementById('healthCards');
         if (!container) return;
         
         container.innerHTML = '';
         
-        if (this.data.metricDefinitions.length === 0) {
-            container.innerHTML = '<p style="color: #999; padding: 10px 0;">커스텀 지표를 추가해주세요.</p>';
-            return;
+        const weekRange = getWeekRange(this.currentWeekKey);
+        
+        for (let i = 0; i < 7; i++) {
+            const card = this.createHealthCard(i, weekRange);
+            container.appendChild(card);
+        }
+    }
+    
+    createHealthCard(dayIndex, weekRange) {
+        const card = document.createElement('div');
+        card.className = 'day-card';
+        card.id = `healthCard${dayIndex}`;
+        
+        const dayDate = new Date(weekRange.start);
+        dayDate.setDate(dayDate.getDate() + dayIndex);
+        const dateStr = formatDate(dayDate);
+        
+        // Get existing data for this day
+        const weekData = this.data.weeklyHealth[this.currentWeekKey] || { days: [] };
+        const dayData = weekData.days[dayIndex] || { weight: '', metrics: {} };
+        
+        card.innerHTML = `
+            <div class="day-card-header">
+                <h3>${getKoreanDayName(dayIndex)} (${dateStr})</h3>
+            </div>
+            <div class="health-input-section">
+                <div class="metric-item">
+                    <label>몸무게 (kg)</label>
+                    <input type="number" 
+                           id="weight${dayIndex}" 
+                           value="${dayData.weight || ''}" 
+                           step="0.1" 
+                           placeholder="65.5" 
+                           class="input-field"
+                           onchange="healthTracker.saveWeight(${dayIndex}, this.value)">
+                </div>
+                <div class="metric-item">
+                    <label>혈압 (수축기/이완기)</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="number" 
+                               id="systolic${dayIndex}" 
+                               value="${dayData.metrics?.systolic || ''}" 
+                               placeholder="120" 
+                               class="input-field"
+                               onchange="healthTracker.saveMetric(${dayIndex}, 'systolic', this.value)">
+                        <span style="align-self: center;">/</span>
+                        <input type="number" 
+                               id="diastolic${dayIndex}" 
+                               value="${dayData.metrics?.diastolic || ''}" 
+                               placeholder="80" 
+                               class="input-field"
+                               onchange="healthTracker.saveMetric(${dayIndex}, 'diastolic', this.value)">
+                    </div>
+                </div>
+                <div class="metric-item">
+                    <label>혈당 (mg/dL)</label>
+                    <input type="number" 
+                           id="bloodSugar${dayIndex}" 
+                           value="${dayData.metrics?.bloodSugar || ''}" 
+                           placeholder="100" 
+                           class="input-field"
+                           onchange="healthTracker.saveMetric(${dayIndex}, 'bloodSugar', this.value)">
+                </div>
+            </div>
+        `;
+        
+        return card;
+    }
+    
+    saveWeight(dayIndex, value) {
+        const weight = parseFloat(value);
+        if (isNaN(weight) || weight <= 0) return;
+        
+        if (!this.data.weeklyHealth[this.currentWeekKey]) {
+            this.data.weeklyHealth[this.currentWeekKey] = { days: [] };
         }
         
-        const weekData = this.getMetrics(this.currentWeekKey);
+        if (!this.data.weeklyHealth[this.currentWeekKey].days[dayIndex]) {
+            this.data.weeklyHealth[this.currentWeekKey].days[dayIndex] = { weight: '', metrics: {} };
+        }
         
-        this.data.metricDefinitions.forEach(metricName => {
-            const item = document.createElement('div');
-            item.className = 'custom-metric-item';
-            
-            const value = weekData.customMetrics[metricName] || '';
-            
-            item.innerHTML = `
-                <label>${metricName}</label>
-                <input type="number" step="0.1" class="input-field" value="${value}" data-metric="${metricName}">
-                <button class="btn-danger" data-metric="${metricName}">삭제</button>
-            `;
-            
-            // Value input event
-            const input = item.querySelector('input');
-            input.addEventListener('change', (e) => {
-                const val = parseFloat(e.target.value);
-                if (!isNaN(val)) {
-                    this.setMetricValue(this.currentWeekKey, metricName, val);
-                }
-            });
-            
-            // Delete button event
-            const deleteBtn = item.querySelector('.btn-danger');
-            deleteBtn.addEventListener('click', () => {
-                if (confirm(`"${metricName}" 지표를 삭제하시겠습니까?`)) {
-                    this.removeCustomMetric(metricName);
-                }
-            });
-            
-            container.appendChild(item);
-        });
+        this.data.weeklyHealth[this.currentWeekKey].days[dayIndex].weight = weight;
+        window.storageManager.saveData(this.data);
+        console.log('Weight saved for day', dayIndex, ':', weight);
+    }
+    
+    saveMetric(dayIndex, metricName, value) {
+        const metricValue = parseFloat(value);
+        if (isNaN(metricValue) || metricValue <= 0) return;
+        
+        if (!this.data.weeklyHealth[this.currentWeekKey]) {
+            this.data.weeklyHealth[this.currentWeekKey] = { days: [] };
+        }
+        
+        if (!this.data.weeklyHealth[this.currentWeekKey].days[dayIndex]) {
+            this.data.weeklyHealth[this.currentWeekKey].days[dayIndex] = { weight: '', metrics: {} };
+        }
+        
+        if (!this.data.weeklyHealth[this.currentWeekKey].days[dayIndex].metrics) {
+            this.data.weeklyHealth[this.currentWeekKey].days[dayIndex].metrics = {};
+        }
+        
+        this.data.weeklyHealth[this.currentWeekKey].days[dayIndex].metrics[metricName] = metricValue;
+        window.storageManager.saveData(this.data);
+        console.log('Metric saved for day', dayIndex, ':', metricName, '=', metricValue);
     }
 }
+
 
 class MealManager {
     constructor() {
