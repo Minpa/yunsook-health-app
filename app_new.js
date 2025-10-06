@@ -903,6 +903,34 @@ class HealthTracker {
         }
     }
     
+    getPreviousDayData(dayIndex, weekRange) {
+        if (dayIndex === 0) {
+            const prevWeekDate = new Date(weekRange.start);
+            prevWeekDate.setDate(prevWeekDate.getDate() - 7);
+            const prevWeekKey = getWeekKey(prevWeekDate);
+            const prevWeekData = this.data.weeklyHealth[prevWeekKey];
+            if (prevWeekData && prevWeekData.days && prevWeekData.days[6]) {
+                return prevWeekData.days[6];
+            }
+        } else {
+            const weekData = this.data.weeklyHealth[this.currentWeekKey];
+            if (weekData && weekData.days && weekData.days[dayIndex - 1]) {
+                return weekData.days[dayIndex - 1];
+            }
+        }
+        return null;
+    }
+    
+    formatDifference(current, previous) {
+        if (!current || !previous) return "";
+        const diff = parseFloat(current) - parseFloat(previous);
+        if (diff === 0) return "<span style=\"color: #999; font-size: 12px; margin-left: 8px;\">-</span>";
+        const sign = diff > 0 ? "+" : "";
+        const color = diff > 0 ? "#e74c3c" : "#27ae60";
+        return `<span style="color: ${color}; font-size: 12px; margin-left: 8px; font-weight: 600;">${sign}${diff.toFixed(1)}</span>`;
+    }
+
+
     createHealthCard(dayIndex, weekRange) {
         const card = document.createElement('div');
         card.className = 'day-card';
@@ -919,6 +947,7 @@ class HealthTracker {
         }
         const weekData = this.data.weeklyHealth[this.currentWeekKey] || { days: [] };
         const dayData = weekData.days[dayIndex] || { weight: '', metrics: {} };
+        const prevDayData = this.getPreviousDayData(dayIndex, weekRange);
         
         card.innerHTML = `
             <div class="day-card-header">
@@ -926,7 +955,7 @@ class HealthTracker {
             </div>
             <div class="health-input-section">
                 <div class="metric-item">
-                    <label>몸무게 (kg)</label>
+                    <label>몸무게 (kg) ${this.formatDifference(dayData.weight, prevDayData?.weight)}</label>
                     <input type="number" 
                            id="weight${dayIndex}" 
                            value="${dayData.weight || ''}" 
@@ -936,7 +965,7 @@ class HealthTracker {
                            onchange="healthTracker.saveWeight(${dayIndex}, this.value)">
                 </div>
                 <div class="metric-item">
-                    <label>골격근량 (kg)</label>
+                    <label>골격근량 (kg) ${this.formatDifference(dayData.metrics?.muscleMass, prevDayData?.metrics?.muscleMass)}</label>
                     <input type="number" 
                            id="muscleMass${dayIndex}" 
                            value="${dayData.metrics?.muscleMass || ''}" 
@@ -946,7 +975,7 @@ class HealthTracker {
                            onchange="healthTracker.saveMetric(${dayIndex}, 'muscleMass', this.value)">
                 </div>
                 <div class="metric-item">
-                    <label>체지방량 (kg)</label>
+                    <label>체지방량 (kg) ${this.formatDifference(dayData.metrics?.bodyFat, prevDayData?.metrics?.bodyFat)}</label>
                     <input type="number" 
                            id="bodyFat${dayIndex}" 
                            value="${dayData.metrics?.bodyFat || ''}" 
