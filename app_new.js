@@ -913,6 +913,10 @@ class HealthTracker {
         const dateStr = formatDate(dayDate);
         
         // Get existing data for this day
+        // Ensure weeklyHealth exists
+        if (!this.data.weeklyHealth) {
+            this.data.weeklyHealth = {};
+        }
         const weekData = this.data.weeklyHealth[this.currentWeekKey] || { days: [] };
         const dayData = weekData.days[dayIndex] || { weight: '', metrics: {} };
         
