@@ -1027,6 +1027,7 @@ class HealthTracker {
         this.data.weeklyHealth[this.currentWeekKey].days[dayIndex].metrics[metricName] = metricValue;
         window.storageManager.saveData(this.data);
         console.log('Metric saved for day', dayIndex, ':', metricName, '=', metricValue);
+        this.renderHealthCards();
     }
 }
 
