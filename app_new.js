@@ -936,7 +936,7 @@ class HealthTracker {
                            onchange="healthTracker.saveWeight(${dayIndex}, this.value)">
                 </div>
                 <div class="metric-item">
-                    <label>근육량 (kg)</label>
+                    <label>골격근량 (kg)</label>
                     <input type="number" 
                            id="muscleMass${dayIndex}" 
                            value="${dayData.metrics?.muscleMass || ''}" 
