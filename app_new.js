@@ -412,16 +412,15 @@ class TabManager {
             case 'memo':
                 if (window.memoManager && window.weekNavigator) {
                     console.log('📝 Refreshing memo tab');
-                    // Make sure we're showing the current week's data
+                    // Always sync with current week and render
                     const currentWeek = window.weekNavigator.currentWeekKey;
-                    if (window.memoManager.currentWeekKey !== currentWeek) {
-                        console.log('📝 Week mismatch, reloading data for:', currentWeek);
-                        window.memoManager.loadWeekData(currentWeek).then(() => {
-                            window.memoManager.renderMemoCards();
-                        });
-                    } else {
+                    console.log('📝 Current week from navigator:', currentWeek);
+                    console.log('📝 Memo manager week:', window.memoManager.currentWeekKey);
+                    
+                    // Always reload and render to ensure sync
+                    window.memoManager.loadWeekData(currentWeek).then(() => {
                         window.memoManager.renderMemoCards();
-                    }
+                    });
                 }
                 break;
         }
