@@ -1606,7 +1606,8 @@ class MemoManager {
             return;
         }
 
-        console.log('📝 Rendering memo cards with data:', this.memos);
+        console.log('📝 Rendering memo cards for week:', this.currentWeekKey);
+        console.log('📝 With memo data:', this.memos);
         container.innerHTML = '';
 
         for (let i = 0; i < 7; i++) {
