@@ -705,6 +705,7 @@ class ExerciseManager {
         for (let i = 0; i < 7; i++) {
             const dayCard = this.createDayCard(i);
             container.appendChild(dayCard);
+            this.renderDayExercises(i);
         }
     }
     
@@ -733,7 +734,6 @@ class ExerciseManager {
             this.addAllToDay(dayIndex);
         });
         
-        this.renderDayExercises(dayIndex);
         
         return card;
     }
