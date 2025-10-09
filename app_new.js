@@ -725,7 +725,7 @@ class ExerciseManager {
             </div>
             <div class="day-exercises" id="dayExercises${dayIndex}"></div>
             <div class="day-total" style="margin-top: 10px; font-weight: 600; color: #4A90E2;">
-                총 시간: <span id="dayTotal${dayIndex}">0</span>분
+                총 시간: <span id="dayTotal${dayIndex}">0분</span>
             </div>
         `;
         
