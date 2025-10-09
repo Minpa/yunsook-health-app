@@ -787,6 +787,7 @@ class ExerciseManager {
         }
         
         let totalMinutes = 0;
+        let completedMinutes = 0;
         
         dayData.exercises.forEach(exercise => {
             const masterExercise = this.data.masterExercises.find(ex => ex.id === exercise.id);
@@ -794,6 +795,10 @@ class ExerciseManager {
             
             totalMinutes += exercise.duration;
             
+            
+            if (exercise.completed) {
+                completedMinutes += exercise.duration;
+            }
             const item = document.createElement('div');
             item.className = 'exercise-item' + (exercise.completed ? ' completed' : '');
             item.innerHTML = `
@@ -826,7 +831,7 @@ class ExerciseManager {
             container.appendChild(item);
         });
         
-        this.updateDayTotal(dayIndex, totalMinutes);
+        this.updateDayTotal(dayIndex, totalMinutes, completedMinutes);
     }
     
     generateDurationOptions(selectedDuration) {
@@ -838,10 +843,10 @@ class ExerciseManager {
         return options;
     }
     
-    updateDayTotal(dayIndex, totalMinutes) {
+    updateDayTotal(dayIndex, totalMinutes, completedMinutes = 0) {
         const totalElement = document.getElementById(`dayTotal${dayIndex}`);
         if (totalElement) {
-            totalElement.textContent = totalMinutes;
+            totalElement.innerHTML = `<span style="color: #27ae60; font-weight: 700;">완료: ${completedMinutes}분</span> / 총: ${totalMinutes}분`;
         }
     }
 }
